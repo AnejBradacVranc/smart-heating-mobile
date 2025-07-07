@@ -63,6 +63,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.hivemq.mqtt.client)
+    implementation(libs.vico.views)
 
     /*implementation(libs.org.eclipse.paho.android.service)
 // Paho Java MQTT Client

@@ -8,8 +8,6 @@ import com.hivemq.client.mqtt.datatypes.MqttQos
 
 class HomeViewModel : ViewModel() {
 
-    private val _appText = MutableLiveData( "SmartHeat")
-
     private val _buttonText = MutableLiveData("Connect")
     val buttonText: LiveData<String> = _buttonText
 
@@ -26,7 +24,6 @@ class HomeViewModel : ViewModel() {
     private val _distance = MutableLiveData<String>()
     val distance: LiveData<String> = _distance
 
-    val appName: LiveData<String> = _appText
 
     private val mqttClient = MQTTClient(
         serverURI = "192.168.1.149",

@@ -33,9 +33,6 @@ class HomeFragment : Fragment() {
 
         val connectButton: Button= binding.connectButton
 
-        homeViewModel.appName.observe(viewLifecycleOwner) {
-            binding.appName.text = it
-        }
         homeViewModel.buttonText.observe(viewLifecycleOwner){
             connectButton.text = it
         }

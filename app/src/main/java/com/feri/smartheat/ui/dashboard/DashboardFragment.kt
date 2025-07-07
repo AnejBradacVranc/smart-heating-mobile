@@ -7,7 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.feri.smartheat.databinding.FragmentDashboardBinding
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
+import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
 
@@ -24,14 +28,18 @@ class DashboardFragment : Fragment() {
     ): View {
         val dashboardViewModel =
             ViewModelProvider(this).get(DashboardViewModel::class.java)
+        val modelProducer = CartesianChartModelProducer()
 
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        binding.chartView.modelProducer = modelProducer
+
+        lifecycleScope.launch {
+            modelProducer.runTransaction { lineSeries { series(15,2,5,2,3,5,2,3,5) } }
+
         }
+
         return root
     }
 
