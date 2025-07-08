@@ -16,7 +16,7 @@ class DashboardViewModel : ViewModel() {
     val roomTempHistory: LiveData<List<Float>> = _roomTempHistory
 
     private val tempHistory = mutableListOf<Float>()
-    private val maxHistorySize = 20 // Keep last 20 readings
+    private val maxHistorySize = 200 // Keep last 20 readings
 
     fun addTemperatureReading(temperature: Float) {
         tempHistory.add(temperature)
