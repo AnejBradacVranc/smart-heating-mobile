@@ -1,37 +1,45 @@
 package com.feri.smartheat.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.feri.smartheat.classes.MQTTClient
 import com.hivemq.client.mqtt.datatypes.MqttQos
 
+// Data class to hold timestamp and value
+data class TimestampedValue(
+    val timestamp: Long,
+    val value: Float
+)
+
 class SharedViewModel : ViewModel() {
     private val _distance = MutableLiveData<String>()
-    private val _distanceHistory = MutableLiveData<List<Float>>(emptyList())
+    private val _distanceHistory = MutableLiveData<List<TimestampedValue>>(emptyList())
+
     val distance: LiveData<String> = _distance
-    val distanceHistory: LiveData<List<Float>> = _distanceHistory
+    val distanceHistory: LiveData<List<TimestampedValue>> = _distanceHistory
 
     // Humidity
     private val _humidity = MutableLiveData<String>()
-    private val _humidityHistory = MutableLiveData<List<Float>>(emptyList())
+    private val _humidityHistory = MutableLiveData<List<TimestampedValue>>(emptyList())
 
     val humidity: LiveData<String> = _humidity
-    val humidityHistory: LiveData<List<Float>> = _humidityHistory
+    val humidityHistory: LiveData<List<TimestampedValue>> = _humidityHistory
 
     // Room Temperature
     private val _roomTemp = MutableLiveData<String>()
-    private val _roomTempHistory = MutableLiveData<List<Float>>(emptyList())
+    private val _roomTempHistory = MutableLiveData<List<TimestampedValue>>(emptyList())
 
     val roomTemp: LiveData<String> = _roomTemp
-    val roomTempHistory: LiveData<List<Float>> = _roomTempHistory
+    val roomTempHistory: LiveData<List<TimestampedValue>> = _roomTempHistory
 
     // Furnace Temperature
     private val _furnaceTemp = MutableLiveData<String>()
-    private val _furnaceTempHistory = MutableLiveData<List<Float>>(emptyList())
+    private val _furnaceTempHistory = MutableLiveData<List<TimestampedValue>>(emptyList())
 
     val furnaceTemp: LiveData<String> = _furnaceTemp
-    val furnaceTempHistory: LiveData<List<Float>> = _furnaceTempHistory
+    val furnaceTempHistory: LiveData<List<TimestampedValue>> = _furnaceTempHistory
 
     private val mqttClient = MQTTClient(
         serverURI = "172.20.10.2",
@@ -39,12 +47,22 @@ class SharedViewModel : ViewModel() {
         clientID = "AndroidClient_${System.currentTimeMillis()}"
     )
 
-    private fun appendToHistory(currentList: MutableLiveData<List<Float>>, newValue: String) {
+    private fun appendToHistory(currentList: MutableLiveData<List<TimestampedValue>>, newValue: String, historySize: Int = 200) {
         try {
             val floatValue = newValue.toFloat()
             val currentHistory = currentList.value ?: emptyList()
-            val updatedHistory = currentHistory + floatValue
+            if(currentHistory.size > historySize){
+                currentList.postValue(listOf())
+                return
+            }
+
+            val timestampedValue = TimestampedValue(
+                timestamp = System.currentTimeMillis(),
+                value = floatValue
+            )
+            val updatedHistory = currentHistory + timestampedValue
             currentList.postValue(updatedHistory)
+
         } catch (e: NumberFormatException) {
             e.printStackTrace()
         }
@@ -58,7 +76,7 @@ class SharedViewModel : ViewModel() {
                     qos = MqttQos.AT_LEAST_ONCE,
                     onMessage = { _, payload ->
                         _furnaceTemp.postValue(payload)
-                        appendToHistory(_furnaceTempHistory, payload)
+                        appendToHistory(_furnaceTempHistory, payload, 1000)
                     }
                 )
 
@@ -67,7 +85,7 @@ class SharedViewModel : ViewModel() {
                     qos = MqttQos.AT_LEAST_ONCE,
                     onMessage = { _, payload ->
                         _roomTemp.postValue(payload)
-                        appendToHistory(_roomTempHistory, payload)
+                        appendToHistory(_roomTempHistory, payload, 1000)
                     }
                 )
 
@@ -76,7 +94,7 @@ class SharedViewModel : ViewModel() {
                     qos = MqttQos.AT_LEAST_ONCE,
                     onMessage = { _, payload ->
                         _humidity.postValue(payload)
-                        appendToHistory(_humidityHistory, payload)
+                        appendToHistory(_humidityHistory, payload, 1000)
                     }
                 )
 
@@ -85,7 +103,7 @@ class SharedViewModel : ViewModel() {
                     qos = MqttQos.AT_LEAST_ONCE,
                     onMessage = { _, payload ->
                         _distance.postValue(payload)
-                        appendToHistory(_distanceHistory, payload)
+                        appendToHistory(_distanceHistory, payload, 1000)
                     }
                 )
             },
@@ -99,29 +117,5 @@ class SharedViewModel : ViewModel() {
         _humidityHistory.postValue(emptyList())
         _roomTempHistory.postValue(emptyList())
         _furnaceTempHistory.postValue(emptyList())
-    }
-
-    // Optional: Add method to limit history size
-    fun limitHistorySize(maxSize: Int = 100) {
-        _distanceHistory.value?.let { list ->
-            if (list.size > maxSize) {
-                _distanceHistory.postValue(list.takeLast(maxSize))
-            }
-        }
-        _humidityHistory.value?.let { list ->
-            if (list.size > maxSize) {
-                _humidityHistory.postValue(list.takeLast(maxSize))
-            }
-        }
-        _roomTempHistory.value?.let { list ->
-            if (list.size > maxSize) {
-                _roomTempHistory.postValue(list.takeLast(maxSize))
-            }
-        }
-        _furnaceTempHistory.value?.let { list ->
-            if (list.size > maxSize) {
-                _furnaceTempHistory.postValue(list.takeLast(maxSize))
-            }
-        }
     }
 }
