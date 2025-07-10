@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services") // ✅ This is crucial
+
 }
 
 android {
@@ -65,7 +67,7 @@ dependencies {
     implementation(libs.hivemq.mqtt.client)
     implementation(libs.vico.views)
 
-    implementation(libs.firebase.bom)
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.firebase.messaging.license)

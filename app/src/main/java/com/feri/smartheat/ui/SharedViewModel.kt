@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.feri.smartheat.classes.MQTTClient
+import com.feri.smartheat.services.FirebaseMessagingService
 import com.hivemq.client.mqtt.datatypes.MqttQos
 
 // Data class to hold timestamp and value
@@ -41,6 +42,8 @@ class SharedViewModel : ViewModel() {
     val furnaceTemp: LiveData<String> = _furnaceTemp
     val furnaceTempHistory: LiveData<List<TimestampedValue>> = _furnaceTempHistory
 
+
+
     private val mqttClient = MQTTClient(
         serverURI = "172.20.10.2",
         port = 1883,
@@ -71,6 +74,7 @@ class SharedViewModel : ViewModel() {
     fun connectToBroker() {
         mqttClient.connect(
             onSuccess = {
+
                 mqttClient.subscribe(
                     topic = "smart-heat/furnace-temp",
                     qos = MqttQos.AT_LEAST_ONCE,

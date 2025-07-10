@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.feri.smartheat.databinding.FragmentDashboardBinding
+import com.feri.smartheat.services.FirebaseMessagingService
 import com.feri.smartheat.ui.SharedViewModel
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.Scroll
@@ -83,6 +84,7 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val token = FirebaseMessagingService.FirebaseMessagingServiceUtils.getToken(requireContext())
 
         // Observe distance (fuel level) from SharedViewModel
         sharedViewModel.distanceHistory.observe(viewLifecycleOwner) { distanceHistory ->
