@@ -65,6 +65,13 @@ dependencies {
     implementation(libs.hivemq.mqtt.client)
     implementation(libs.vico.views)
 
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.messaging.ktx)
+    implementation(libs.firebase.messaging.license)
+    implementation(libs.firebase.messaging.directboot)
+
+
     /*implementation(libs.org.eclipse.paho.android.service)
 // Paho Java MQTT Client
     implementation(libs.org.eclipse.paho.client.mqttv3)*/

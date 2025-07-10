@@ -1,5 +1,8 @@
 [versions]
 agp = "8.11.0"
+firebaseBom = "33.16.0"
+firebaseMessaging = "24.1.2"
+firebaseMessagingLicense = "12.0.1"
 hivemqMqttClient = "1.3.7"
 kotlin = "2.0.21"
 coreKtx = "1.10.1"
@@ -21,6 +24,11 @@ vico = "2.1.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging" }
+firebase-messaging-directboot = { module = "com.google.firebase:firebase-messaging-directboot", version.ref = "firebaseMessaging" }
+firebase-messaging-ktx = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebaseMessaging" }
+firebase-messaging-license = { module = "com.google.firebase:firebase-messaging-license", version.ref = "firebaseMessagingLicense" }
 hivemq-mqtt-client = { module = "com.hivemq:hivemq-mqtt-client", version.ref = "hivemqMqttClient" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

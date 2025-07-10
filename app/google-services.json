@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "910307661737",
+    "project_id": "smartheat-d8b87",
+    "storage_bucket": "smartheat-d8b87.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910307661737:android:b51c4ae9b0b90bb90e96b8",
+        "android_client_info": {
+          "package_name": "com.feri.smartheat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwgXOCAr3kFrHmZ0lHiL9C8Na-Jxauq8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
