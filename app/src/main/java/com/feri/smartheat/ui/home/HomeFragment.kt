@@ -58,6 +58,19 @@ class HomeFragment : Fragment() {
             binding.furnaceTempText.text = it
         }
 
+        sharedViewModel.isConnected.observe(viewLifecycleOwner){ connected ->
+            if(connected == true){
+                binding.criticalFuelInputLayout.visibility = View.INVISIBLE
+                binding.connectButton.visibility = View.INVISIBLE
+            }
+            else
+            {
+                binding.criticalFuelInputLayout.visibility = View.VISIBLE
+                binding.connectButton.visibility = View.VISIBLE
+
+            }
+        }
+
 
         connectButton.setOnClickListener {
             try {

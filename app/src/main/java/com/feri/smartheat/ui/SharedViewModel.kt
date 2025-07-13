@@ -22,6 +22,9 @@ data class TimestampedValue(
 
 class SharedViewModel : ViewModel() {
 
+    private val _isConnected = MutableLiveData<Boolean>(false)
+    val isConnected: LiveData<Boolean> = _isConnected
+
     private val _distance = MutableLiveData<String>()
     private val _distanceHistory = MutableLiveData<List<TimestampedValue>>(emptyList())
 
@@ -86,11 +89,13 @@ class SharedViewModel : ViewModel() {
                         fuelCriticalPoint =  criticalFuelLevel,
                         timestamp = Utils.getCurrentDateTimeString()
                     )
-                    mqttClient.publish("smart-heat/register-device", Json.encodeToString(registrationObj), MqttQos.EXACTLY_ONCE, onError = {
+                    mqttClient.publish("smart-heat/register-device", Json.encodeToString(registrationObj), MqttQos.EXACTLY_ONCE,
+                        onError = {
                         it.printStackTrace()
+                        _isConnected.postValue(false)
                     },
                         onSuccess = {
-
+                            _isConnected.postValue(true)
                             mqttClient.subscribe(
                                 topic = "smart-heat/furnace-temp",
                                 qos = MqttQos.AT_LEAST_ONCE,
