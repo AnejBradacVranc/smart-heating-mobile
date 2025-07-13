@@ -142,6 +142,16 @@ class SharedViewModel : ViewModel() {
         )
     }
 
+    fun disconnectFromBroker(){
+        mqttClient.disconnect (onError = {
+            Log.d("MQTT", "Could not disconnect")
+
+        }, onComplete = {
+            _isConnected.postValue(false)
+            Log.d("MQTT", "Disconnected successfuly")
+        })
+    }
+
 
     // Optional: Add method to clear history if needed
     fun clearHistory() {

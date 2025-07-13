@@ -61,20 +61,24 @@ class HomeFragment : Fragment() {
         sharedViewModel.isConnected.observe(viewLifecycleOwner){ connected ->
             if(connected == true){
                 binding.criticalFuelInputLayout.visibility = View.INVISIBLE
-                binding.connectButton.visibility = View.INVISIBLE
+                binding.connectButton.text = "Disconnect"
             }
             else
             {
                 binding.criticalFuelInputLayout.visibility = View.VISIBLE
-                binding.connectButton.visibility = View.VISIBLE
-
+                binding.connectButton.text = "Connect"
             }
         }
 
 
         connectButton.setOnClickListener {
             try {
-            sharedViewModel.connectToBroker(token, binding.criticalFuelInput.text.toString().toInt())
+                if(sharedViewModel.isConnected.value == false){
+                    sharedViewModel.connectToBroker(token, binding.criticalFuelInput.text.toString().toInt())
+
+                }else {
+                    sharedViewModel.disconnectFromBroker()
+                }
 
             }catch (e: Exception){
                 Log.d("Error", "Error when setting critical fuel level")
