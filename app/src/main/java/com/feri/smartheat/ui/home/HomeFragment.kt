@@ -70,7 +70,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-
         connectButton.setOnClickListener {
             try {
                 if(sharedViewModel.isConnected.value == false){
