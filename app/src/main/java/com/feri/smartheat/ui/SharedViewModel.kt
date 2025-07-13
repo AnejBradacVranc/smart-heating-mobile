@@ -4,9 +4,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.feri.smartheat.classes.DeviceRegistrationPayload
 import com.feri.smartheat.classes.MQTTClient
+import com.feri.smartheat.classes.Utils
 import com.feri.smartheat.services.FirebaseMessagingService
+import com.google.firebase.installations.FirebaseInstallations
 import com.hivemq.client.mqtt.datatypes.MqttQos
+import kotlinx.serialization.json.Json
+import java.sql.Date
+import java.time.LocalDateTime
 
 // Data class to hold timestamp and value
 data class TimestampedValue(
@@ -15,6 +21,7 @@ data class TimestampedValue(
 )
 
 class SharedViewModel : ViewModel() {
+
     private val _distance = MutableLiveData<String>()
     private val _distanceHistory = MutableLiveData<List<TimestampedValue>>(emptyList())
 
@@ -42,12 +49,10 @@ class SharedViewModel : ViewModel() {
     val furnaceTemp: LiveData<String> = _furnaceTemp
     val furnaceTempHistory: LiveData<List<TimestampedValue>> = _furnaceTempHistory
 
-
-
     private val mqttClient = MQTTClient(
-        serverURI = "172.20.10.2",
+        serverURI = "192.168.1.148",
         port = 1883,
-        clientID = "AndroidClient_${System.currentTimeMillis()}"
+        clientID = "AndroidClient_${FirebaseInstallations.getInstance().id}"
     )
 
     private fun appendToHistory(currentList: MutableLiveData<List<TimestampedValue>>, newValue: String, historySize: Int = 200) {
@@ -71,49 +76,67 @@ class SharedViewModel : ViewModel() {
         }
     }
 
-    fun connectToBroker() {
+    fun connectToBroker(deviceToken: String, criticalFuelLevel: Int) {
         mqttClient.connect(
             onSuccess = {
+                try {
 
-                mqttClient.subscribe(
-                    topic = "smart-heat/furnace-temp",
-                    qos = MqttQos.AT_LEAST_ONCE,
-                    onMessage = { _, payload ->
-                        _furnaceTemp.postValue(payload)
-                        appendToHistory(_furnaceTempHistory, payload, 1000)
-                    }
-                )
+                    val registrationObj = DeviceRegistrationPayload(
+                        token = deviceToken,
+                        fuelCriticalPoint =  criticalFuelLevel,
+                        timestamp = Utils.getCurrentDateTimeString()
+                    )
+                    mqttClient.publish("smart-heat/register-device", Json.encodeToString(registrationObj), MqttQos.EXACTLY_ONCE, onError = {
+                        it.printStackTrace()
+                    },
+                        onSuccess = {
 
-                mqttClient.subscribe(
-                    topic = "smart-heat/room-temp",
-                    qos = MqttQos.AT_LEAST_ONCE,
-                    onMessage = { _, payload ->
-                        _roomTemp.postValue(payload)
-                        appendToHistory(_roomTempHistory, payload, 1000)
-                    }
-                )
+                            mqttClient.subscribe(
+                                topic = "smart-heat/furnace-temp",
+                                qos = MqttQos.AT_LEAST_ONCE,
+                                onMessage = { _, payload ->
+                                    _furnaceTemp.postValue(payload)
+                                    appendToHistory(_furnaceTempHistory, payload, 1000)
+                                }
+                            )
 
-                mqttClient.subscribe(
-                    topic = "smart-heat/room-humidity",
-                    qos = MqttQos.AT_LEAST_ONCE,
-                    onMessage = { _, payload ->
-                        _humidity.postValue(payload)
-                        appendToHistory(_humidityHistory, payload, 1000)
-                    }
-                )
+                            mqttClient.subscribe(
+                                topic = "smart-heat/room-temp",
+                                qos = MqttQos.AT_LEAST_ONCE,
+                                onMessage = { _, payload ->
+                                    _roomTemp.postValue(payload)
+                                    appendToHistory(_roomTempHistory, payload, 1000)
+                                }
+                            )
 
-                mqttClient.subscribe(
-                    topic = "smart-heat/distance",
-                    qos = MqttQos.AT_LEAST_ONCE,
-                    onMessage = { _, payload ->
-                        _distance.postValue(payload)
-                        appendToHistory(_distanceHistory, payload, 1000)
-                    }
-                )
+                            mqttClient.subscribe(
+                                topic = "smart-heat/room-humidity",
+                                qos = MqttQos.AT_LEAST_ONCE,
+                                onMessage = { _, payload ->
+                                    _humidity.postValue(payload)
+                                    appendToHistory(_humidityHistory, payload, 1000)
+                                }
+                            )
+
+                            mqttClient.subscribe(
+                                topic = "smart-heat/distance",
+                                qos = MqttQos.AT_LEAST_ONCE,
+                                onMessage = { _, payload ->
+                                    _distance.postValue(Utils.calculateRemainingFuel(payload.toInt(), criticalFuelLevel).toString() )
+                                    appendToHistory(_distanceHistory, payload, 1000)
+                                }
+                            )
+                        }
+                    )
+
+                }catch (e: Exception){
+                    e.printStackTrace()
+                }
             },
             onError = { it.printStackTrace() }
         )
     }
+
 
     // Optional: Add method to clear history if needed
     fun clearHistory() {

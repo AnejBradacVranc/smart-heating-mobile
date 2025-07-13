@@ -168,4 +168,37 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- Critical Fuel Level Input -->
+    <LinearLayout
+        android:id="@+id/critical_fuel_input_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/connect_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+        <TextView
+            android:id="@+id/critical_fuel_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Critical fuel level (cm)"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/critical_fuel_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Distance where furnace stops taking pellets"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

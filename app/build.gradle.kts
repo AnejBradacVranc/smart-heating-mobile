@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.gms.google-services") // ✅ This is crucial
-
+    id("com.google.gms.google-services")
+    kotlin("plugin.serialization") version "2.2.0"
 }
 
 android {
@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.feri.smartheat"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -72,6 +72,8 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.firebase.messaging.license)
     implementation(libs.firebase.messaging.directboot)
+
+    implementation(libs.kotlinx.serialization.json)
 
 
     /*implementation(libs.org.eclipse.paho.android.service)

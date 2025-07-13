@@ -1,7 +1,6 @@
 package com.feri.smartheat.classes
 
 import com.hivemq.client.mqtt.MqttClient
-import com.hivemq.client.mqtt.MqttGlobalPublishFilter
 import com.hivemq.client.mqtt.datatypes.MqttQos
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5RetainHandling
@@ -42,7 +41,7 @@ class MQTTClient(
         message: String,
         qos: MqttQos = MqttQos.AT_LEAST_ONCE,
         retain: Boolean = false,
-        onComplete: () -> Unit = {},
+        onSuccess: () -> Unit = {},
         onError: (Throwable) -> Unit = {}
     ) {
         client.publishWith()
@@ -50,7 +49,7 @@ class MQTTClient(
             .payload(message.toByteArray())
             .qos(qos)
             .send()
-            .whenComplete { _, ex -> if (ex != null) onError(ex) else onComplete() }
+            .whenComplete { _, ex -> if (ex != null) onError(ex) else onSuccess() }
     }
 
     fun subscribe(

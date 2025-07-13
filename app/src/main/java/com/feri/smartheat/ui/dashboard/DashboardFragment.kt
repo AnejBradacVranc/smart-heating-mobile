@@ -84,8 +84,6 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val token = FirebaseMessagingService.FirebaseMessagingServiceUtils.getToken(requireContext())
-
         // Observe distance (fuel level) from SharedViewModel
         sharedViewModel.distanceHistory.observe(viewLifecycleOwner) { distanceHistory ->
             if (distanceHistory.isNotEmpty()) {

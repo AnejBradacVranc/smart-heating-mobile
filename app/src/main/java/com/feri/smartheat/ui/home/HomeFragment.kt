@@ -1,6 +1,7 @@
 package com.feri.smartheat.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.feri.smartheat.databinding.FragmentHomeBinding
+import com.feri.smartheat.services.FirebaseMessagingService
 import com.feri.smartheat.ui.SharedViewModel
 
 class HomeFragment : Fragment() {
@@ -27,6 +29,8 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val token = FirebaseMessagingService.FirebaseMessagingServiceUtils.getToken(requireContext())
+
         val homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -54,8 +58,14 @@ class HomeFragment : Fragment() {
             binding.furnaceTempText.text = it
         }
 
+
         connectButton.setOnClickListener {
-            sharedViewModel.connectToBroker()
+            try {
+            sharedViewModel.connectToBroker(token, binding.criticalFuelInput.text.toString().toInt())
+
+            }catch (e: Exception){
+                Log.d("Error", "Error when setting critical fuel level")
+            }
         }
 
         return root
