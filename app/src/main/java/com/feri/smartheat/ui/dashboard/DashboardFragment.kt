@@ -1,24 +1,19 @@
 package com.feri.smartheat.ui.dashboard
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.feri.smartheat.databinding.FragmentDashboardBinding
-import com.feri.smartheat.services.FirebaseMessagingService
 import com.feri.smartheat.ui.SharedViewModel
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
-import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.views.cartesian.ScrollHandler
-import com.patrykandpatrick.vico.views.cartesian.ZoomHandler
 import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
@@ -84,15 +79,16 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sharedViewModel.fetchHistory()
         // Observe distance (fuel level) from SharedViewModel
-        sharedViewModel.distanceHistory.observe(viewLifecycleOwner) { distanceHistory ->
+        sharedViewModel.fuelPercentageHistory.observe(viewLifecycleOwner) { distanceHistory ->
             if (distanceHistory.isNotEmpty()) {
                 lifecycleScope.launch {
                     fuelLevelChartModelProducer.runTransaction {
                         lineSeries {
                             // Use index-based X values instead of timestamps
                             series(
-                                y = distanceHistory.map { it.value }
+                                y = distanceHistory.map { it }
                             )
                         }
                     }
@@ -109,7 +105,7 @@ class DashboardFragment : Fragment() {
                     roomHumidityChartModelProducer.runTransaction {
                         lineSeries {
                             series(
-                                y = humidityHistory.map { it.value }
+                                y = humidityHistory.map { it }
                             )
                         }
                     }
@@ -124,7 +120,7 @@ class DashboardFragment : Fragment() {
                     furnaceTempChartModelProducer.runTransaction {
                         lineSeries {
                             series(
-                                y = furnaceTempHistory.map { it.value }
+                                y = furnaceTempHistory.map { it }
                             )
                         }
                     }
@@ -140,7 +136,7 @@ class DashboardFragment : Fragment() {
                     roomTempChartModelProducer.runTransaction {
                         lineSeries {
                             series(
-                                y = tempHistory.map { it.value }
+                                y = tempHistory.map { it }
                             )
                         }
                     }

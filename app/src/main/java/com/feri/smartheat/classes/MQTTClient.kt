@@ -83,7 +83,7 @@ class MQTTClient(
             .send()
             .whenComplete { _, ex -> if (ex != null) onError(ex) else onComplete() }
     }
-    }
+}
 
 
 

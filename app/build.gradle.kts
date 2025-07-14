@@ -74,6 +74,9 @@ dependencies {
     implementation(libs.firebase.messaging.directboot)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
 
 
     /*implementation(libs.org.eclipse.paho.android.service)
