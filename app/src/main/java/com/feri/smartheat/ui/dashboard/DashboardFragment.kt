@@ -1,6 +1,7 @@
 package com.feri.smartheat.ui.dashboard
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -79,71 +80,75 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedViewModel.fetchHistory()
-        // Observe distance (fuel level) from SharedViewModel
-        sharedViewModel.fuelPercentageHistory.observe(viewLifecycleOwner) { distanceHistory ->
-            if (distanceHistory.isNotEmpty()) {
-                lifecycleScope.launch {
-                    fuelLevelChartModelProducer.runTransaction {
-                        lineSeries {
-                            // Use index-based X values instead of timestamps
-                            series(
-                                y = distanceHistory.map { it }
-                            )
+        sharedViewModel.fetchHistory( onSuccess = {
+            // Observe distance (fuel level) from SharedViewModel
+            sharedViewModel.fuelPercentageHistory.observe(viewLifecycleOwner) { distanceHistory ->
+                if (distanceHistory.isNotEmpty()) {
+                    lifecycleScope.launch {
+                        fuelLevelChartModelProducer.runTransaction {
+                            lineSeries {
+                                // Use index-based X values instead of timestamps
+                                series(
+                                    y = distanceHistory.map { it }
+                                )
+                            }
                         }
+                        // Force scroll to end after update
+                        binding.fuelLevelChartView.scrollHandler.scroll(Scroll.Absolute.End)
                     }
-                    // Force scroll to end after update
-                    binding.fuelLevelChartView.scrollHandler.scroll(Scroll.Absolute.End)
                 }
             }
-        }
 
-        // Observe humidity data
-        sharedViewModel.humidityHistory.observe(viewLifecycleOwner) { humidityHistory ->
-            if (humidityHistory.isNotEmpty()) {
-                lifecycleScope.launch {
-                    roomHumidityChartModelProducer.runTransaction {
-                        lineSeries {
-                            series(
-                                y = humidityHistory.map { it }
-                            )
+            // Observe humidity data
+            sharedViewModel.humidityHistory.observe(viewLifecycleOwner) { humidityHistory ->
+                if (humidityHistory.isNotEmpty()) {
+                    lifecycleScope.launch {
+                        roomHumidityChartModelProducer.runTransaction {
+                            lineSeries {
+                                series(
+                                    y = humidityHistory.map { it }
+                                )
+                            }
                         }
+                        binding.roomHumidityChartView.scrollHandler.scroll(Scroll.Absolute.End)
                     }
-                    binding.roomHumidityChartView.scrollHandler.scroll(Scroll.Absolute.End)
                 }
             }
-        }
 
-        sharedViewModel.furnaceTempHistory.observe(viewLifecycleOwner) { furnaceTempHistory ->
-            if (furnaceTempHistory.isNotEmpty()) {
-                lifecycleScope.launch {
-                    furnaceTempChartModelProducer.runTransaction {
-                        lineSeries {
-                            series(
-                                y = furnaceTempHistory.map { it }
-                            )
+            sharedViewModel.furnaceTempHistory.observe(viewLifecycleOwner) { furnaceTempHistory ->
+                if (furnaceTempHistory.isNotEmpty()) {
+                    lifecycleScope.launch {
+                        furnaceTempChartModelProducer.runTransaction {
+                            lineSeries {
+                                series(
+                                    y = furnaceTempHistory.map { it }
+                                )
+                            }
                         }
+                        binding.furnaceTempChartView.scrollHandler.scroll(Scroll.Absolute.End)
                     }
-                    binding.furnaceTempChartView.scrollHandler.scroll(Scroll.Absolute.End)
                 }
             }
-        }
 
-        // Observe temperature history from ViewModel and update chart
-        sharedViewModel.roomTempHistory.observe(viewLifecycleOwner) { tempHistory ->
-            if (tempHistory.isNotEmpty()) {
-                lifecycleScope.launch {
-                    roomTempChartModelProducer.runTransaction {
-                        lineSeries {
-                            series(
-                                y = tempHistory.map { it }
-                            )
+            // Observe temperature history from ViewModel and update chart
+            sharedViewModel.roomTempHistory.observe(viewLifecycleOwner) { tempHistory ->
+                if (tempHistory.isNotEmpty()) {
+                    lifecycleScope.launch {
+                        roomTempChartModelProducer.runTransaction {
+                            lineSeries {
+                                series(
+                                    y = tempHistory.map { it }
+                                )
+                            }
                         }
+                        binding.roomTempChartView.scrollHandler.scroll(Scroll.Absolute.End)
                     }
-                    binding.roomTempChartView.scrollHandler.scroll(Scroll.Absolute.End)
                 }
             }
-        }
+        }, onError = {
+            Log.d("Error", it)
+        })
+
     }
 
 }

@@ -58,6 +58,13 @@ class HomeFragment : Fragment() {
             binding.furnaceTempText.text = it
         }
 
+        sharedViewModel.errorMessage.observe(viewLifecycleOwner) {
+            if(it !== null)
+                binding.errorMessage.text = it
+            else
+                binding.errorMessage.isEnabled = false
+        }
+
         sharedViewModel.isConnected.observe(viewLifecycleOwner){ connected ->
             if(connected == true){
                 binding.criticalFuelInputLayout.visibility = View.INVISIBLE
@@ -80,7 +87,8 @@ class HomeFragment : Fragment() {
                 }
 
             }catch (e: Exception){
-                Log.d("Error", "Error when setting critical fuel level")
+                Log.d("Error", "Error when connecting to broker")
+                e.printStackTrace()
             }
         }
 

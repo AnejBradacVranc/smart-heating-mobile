@@ -30,7 +30,7 @@ class FirebaseMessagingService  : FirebaseMessagingService() {
         )
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notifications_black_24dp) // replace with your actual icon
+            .setSmallIcon(R.drawable.ic_notifications_black_24dp)
             .setContentTitle(title)
             .setContentText(message)
             .setAutoCancel(true)
@@ -39,18 +39,15 @@ class FirebaseMessagingService  : FirebaseMessagingService() {
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Android 8+ requires a Notification Channel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "SmartHeat Notifications",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            channel.description = "SmartHeat push notifications"
-            channel.enableLights(true)
-            channel.lightColor = Color.BLUE
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            channelId,
+            "SmartHeat Notifications",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        channel.description = "SmartHeat push notifications"
+        channel.enableLights(true)
+        channel.lightColor = Color.BLUE
+        notificationManager.createNotificationChannel(channel)
 
         notificationManager.notify(notificationId, notificationBuilder.build())
     }
