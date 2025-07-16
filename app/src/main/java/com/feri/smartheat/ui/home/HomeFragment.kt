@@ -38,6 +38,8 @@ class HomeFragment : Fragment() {
 
         val connectButton: Button = binding.connectButton
 
+        binding.criticalFuelInput.setText("100")
+
         homeViewModel.buttonText.observe(viewLifecycleOwner) {
             binding.connectButton.text = it
         }
@@ -78,18 +80,24 @@ class HomeFragment : Fragment() {
         }
 
         connectButton.setOnClickListener {
-            try {
-                if(sharedViewModel.isConnected.value == false){
-                    sharedViewModel.connectToBroker(token, binding.criticalFuelInput.text.toString().toInt())
+            if(binding.criticalFuelInput.text.toString() == "")
+            {
+                sharedViewModel.setErrorMessage("Please input critical fuel point for your furnace")
+            }else{
+                try {
+                    if(sharedViewModel.isConnected.value == false){
+                        sharedViewModel.connectToBroker(token, binding.criticalFuelInput.text.toString().toInt())
 
-                }else {
-                    sharedViewModel.disconnectFromBroker()
+                    }else {
+                        sharedViewModel.disconnectFromBroker()
+                    }
+
+                }catch (e: Exception){
+                    Log.d("Error", "Error when connecting to broker")
+                    e.printStackTrace()
                 }
-
-            }catch (e: Exception){
-                Log.d("Error", "Error when connecting to broker")
-                e.printStackTrace()
             }
+
         }
 
         return root

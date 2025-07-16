@@ -184,6 +184,9 @@ class SharedViewModel : ViewModel() {
         })
     }
 
+    fun setErrorMessage(message: String){
+        _errorMessage.postValue(message)
+    }
 
     private fun registerDevice(
         token: String, fuelCriticalPoint: Int, onSuccess: () -> Unit = {},
