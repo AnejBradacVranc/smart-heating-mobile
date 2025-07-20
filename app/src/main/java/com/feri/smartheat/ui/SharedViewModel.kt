@@ -98,6 +98,7 @@ class SharedViewModel : ViewModel() {
                             topic = "smart-heat/furnace-temp",
                             qos = MqttQos.AT_LEAST_ONCE,
                             onMessage = { _, payload ->
+                                Log.d("RECEIVED_MSG_HEAT", Utils.getCurrentTimeMillis().toString())
                                 _furnaceTemp.postValue(payload)
                                 //appendToHistory(_furnaceTempHistory, payload, 1000)
                             }
@@ -106,6 +107,7 @@ class SharedViewModel : ViewModel() {
                             topic = "smart-heat/room-temp",
                             qos = MqttQos.AT_LEAST_ONCE,
                             onMessage = { _, payload ->
+                                Log.d("RECEIVED_MSG_ROOM_TEMP", Utils.getCurrentTimeMillis().toString())
                                 _roomTemp.postValue(payload)
                                 //appendToHistory(_roomTempHistory, payload, 1000)
                             }
@@ -114,6 +116,7 @@ class SharedViewModel : ViewModel() {
                             topic = "smart-heat/room-humidity",
                             qos = MqttQos.AT_LEAST_ONCE,
                             onMessage = { _, payload ->
+                                Log.d("RECEIVED_MSG_ROOM_HUM", Utils.getCurrentTimeMillis().toString())
                                 _humidity.postValue(payload)
                                 //appendToHistory(_humidityHistory, payload, 1000)
                             }
@@ -122,6 +125,7 @@ class SharedViewModel : ViewModel() {
                             topic = "smart-heat/distance",
                             qos = MqttQos.AT_LEAST_ONCE,
                             onMessage = { _, payload ->
+                                Log.d("RECEIVED_MSG_DIST", Utils.getCurrentTimeMillis().toString())
                                 _distance.postValue(
                                     Utils.calculateRemainingFuel(
                                         payload.toInt(),

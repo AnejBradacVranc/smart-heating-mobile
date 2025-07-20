@@ -35,7 +35,7 @@ interface ApiService {
 }
 
 object Api{
-    private const val BASE_URL ="http://192.168.1.148:5000/api/"
+    private const val BASE_URL ="http://192.168.1.148:8000/api/"
 
    val retrofit: Retrofit =
          Retrofit.Builder()

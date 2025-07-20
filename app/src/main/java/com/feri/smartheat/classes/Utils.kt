@@ -1,5 +1,6 @@
 package com.feri.smartheat.classes
 
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -13,5 +14,9 @@ object Utils {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ISO_DATE_TIME
         return current.format(formatter)
+    }
+
+    fun getCurrentTimeMillis(): Long {
+        return Instant.now().toEpochMilli()
     }
 }

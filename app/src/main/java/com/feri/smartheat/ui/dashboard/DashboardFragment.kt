@@ -87,13 +87,11 @@ class DashboardFragment : Fragment() {
                     lifecycleScope.launch {
                         fuelLevelChartModelProducer.runTransaction {
                             lineSeries {
-                                // Use index-based X values instead of timestamps
                                 series(
                                     y = distanceHistory.map { it }
                                 )
                             }
                         }
-                        // Force scroll to end after update
                         binding.fuelLevelChartView.scrollHandler.scroll(Scroll.Absolute.End)
                     }
                 }
